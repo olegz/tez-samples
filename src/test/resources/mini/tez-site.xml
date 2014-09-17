@@ -1,7 +1,0 @@
-<configuration>
-	<property>
-		<name>tez.ignore.lib.uris</name>
-		<value>true</value>
-		<description>ignore tez libs</description>
-	</property>
-</configuration>
