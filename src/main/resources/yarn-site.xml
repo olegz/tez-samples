@@ -13,6 +13,12 @@
   limitations under the License. See accompanying LICENSE file.
 -->
 <configuration>
+  <property>      
+     <!-- This ensures that tez.lib.uri property is ignored thus relying on LocalResources available in AM and Tasks --> 
+     <name>tez.ignore.lib.uris</name>       
+     <value>true</value>  
+     <description>ignore tez libs</description>
+  </property>
   <property>
     <name>fs.defaultFS</name>
     <value>hdfs://localhost:55555</value>
@@ -26,11 +32,7 @@
     <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
     <value>org.apache.hadoop.mapred.ShuffleHandler</value>
   </property>
-  <property>       
-     <name>tez.ignore.lib.uris</name>       
-     <value>true</value>  
-     <description>ignore tez libs</description>
-  </property>
+  
   <property>       
      <name>yarn.resourcemanager.resourcetracker.address</name>       
      <value>0.0.0.0:8025</value>  

@@ -54,9 +54,13 @@ public class TezWordCount {
 	static String SUMMATION = "Summation";
 
 	public static void main(String[] args) throws Exception {
+		// [NOTE-1] When executing from the command line you may already have a generated JAR file for your project, 
+		// so setting this property to false will not generate JAR from the current workspace. This is purely an IDE-dev feature.
 		System.setProperty(TezConstants.GENERATE_JAR, "true");
+		// [NOTE-2] This will 'always' update the classpath (see NOTE-3 below), thus ensuring that any changes you may have made (code or JAR)
+		// are always reflected when submitting Tez JOB
 		System.setProperty(TezConstants.UPDATE_CLASSPATH, "true");
-		String file = "sample.txt";
+		String inputFile = "sample.txt";
 
 		String appName = "tez-wc";
 		String outputPath = appName + "_out";
@@ -68,16 +72,16 @@ public class TezWordCount {
 		fs.delete(new Path(outputPath), true);
 
 		// copy source file from local file system to HDFS - OPTIONAL (safe to comment if file is already there)
-		Path testFile = new Path(file);
-		fs.copyFromLocalFile(false, true, new Path(file), testFile);
+		Path testFile = new Path(inputFile);
+		fs.copyFromLocalFile(false, true, new Path(inputFile), testFile);
 
 		System.out.println("STARTING JOB");
 
-		Path inputPath = fs.makeQualified(new Path(file));
+		Path inputPath = fs.makeQualified(new Path(inputFile));
 		logger.info("Counting words in " + inputPath);
 		logger.info("Building local resources");
 		/*
-		 * The line below is the key for transparent classpath management. Classpath is calculated
+		 * [NOTE-3] The line below is the key for transparent classpath management. Classpath is calculated
 		 * and provisioned to HDFS returning map of LocalResources which will be later added
 		 * to AM (via TezClient) and each Vertex before
 		 */
@@ -94,7 +98,7 @@ public class TezWordCount {
 		        .newBuilder(Text.class.getName(), IntWritable.class.getName(),
 		            HashPartitioner.class.getName(), null).build();
 
-		DataSourceDescriptor dataSource = MRInput.createConfigBuilder(new Configuration(tezConfiguration), TextInputFormat.class, file).build();
+		DataSourceDescriptor dataSource = MRInput.createConfigBuilder(new Configuration(tezConfiguration), TextInputFormat.class, inputFile).build();
 		
 		DataSinkDescriptor dataSink = MROutput.createConfigBuilder(new Configuration(tezConfiguration), TextOutputFormat.class, outputPath).build();
 		

@@ -1,4 +1,3 @@
-spark-on-tez
+Tez Samples
 ============
-
-Tez port for Spark API
+Samples for using Apache Tez
