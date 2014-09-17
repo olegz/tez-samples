@@ -1,4 +1,4 @@
-package org.apache.spark.tez;
+package oz.tez.deployment.utils;
 
 public interface TezConstants {
 

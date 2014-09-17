@@ -1,9 +1,0 @@
-val fs = FileSystem.get(new YarnConfiguration);
-val testFile = new Path("sample-256.txt");
-fs.copyFromLocalFile(false, true, new Path("/Users/ozhurakousky/dev/spark-on-tez/sample-256.txt"), testFile);
-println(fs.makeQualified(testFile))
-val source = sc.textFile("sample-256.txt")
-val f = source.flatMap ( line => line.split(" ") )
-val m = f.map(word => (word, 1L))
-val r = m.reduceByKey(_ + _)
-val result = r.collect

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.spark.tez;
+package oz.tez.deployment.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -21,8 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,17 +34,14 @@ import java.util.jar.Manifest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.StringUtils;
-
 /**
  * Utility class which contains methods related to generating JAR file 
  * and/or byte stream from passed directory.
  * Currently used as a dev feature allowing auto-generation of the JAR filr from 
  * local dev workspace when submitting Tez jobs directly from the IDE.
  */
-public class JarUtils {
-	private final static Log logger = LogFactory.getLog(JarUtils.class);
+public class ClassPathUtils {
+	private final static Log logger = LogFactory.getLog(ClassPathUtils.class);
 	
 	/**
 	 * 
@@ -155,7 +153,7 @@ public class JarUtils {
 			} 
 			catch (Exception e) {
 				String message = e.getMessage();
-				if (StringUtils.hasText(message)){
+				if (message != null){
 					if (!message.toLowerCase().contains("duplicate")){
 						throw new IllegalStateException(e);
 					}
@@ -180,11 +178,11 @@ public class JarUtils {
 	public static String[] initClasspathExclusions(String exclusionFile){
 		String[] classpathExclusions = null;
 		try {
-			ClassPathResource exclusionResource = new ClassPathResource(exclusionFile);
-			if (exclusionResource.exists()){
+			InputStream exclusionResource = ClassLoader.getSystemClassLoader().getResourceAsStream(exclusionFile);
+			
+			if (exclusionResource != null){
 				List<String> exclusionPatterns = new ArrayList<String>();
-				File file = exclusionResource.getFile();
-				BufferedReader reader = new BufferedReader(new FileReader(file));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(exclusionResource));
 				String line;
 				while ((line = reader.readLine()) != null){
 					exclusionPatterns.add(line.trim());

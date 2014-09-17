@@ -1,12 +1,10 @@
 /**
  * 
  */
-package org.apache.spark.tez;
+package oz.tez.deployment.utils;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -23,9 +21,6 @@ import org.apache.hadoop.yarn.api.records.LocalResource;
 import org.apache.hadoop.yarn.api.records.LocalResourceType;
 import org.apache.hadoop.yarn.api.records.LocalResourceVisibility;
 import org.apache.hadoop.yarn.util.ConverterUtils;
-import org.apache.spark.tez.TezConstants;
-import org.springframework.core.io.ClassPathResource;
-
 /**
  * Utility functions related to variety of tasks to be performed via YARN
  * such as setting up LocalResource, provisioning classpath etc.
@@ -101,11 +96,11 @@ public class YarnUtils {
 			File f = new File(classpathUrl.getFile());
 			if (f.isDirectory()) {
 				if (generateJar){
-					String jarFileName = JarUtils.generateJarFileName(applicationName);
+					String jarFileName = ClassPathUtils.generateJarFileName(applicationName);
 					if (logger.isDebugEnabled()){
 						logger.debug("Generating application JAR: " + jarFileName);
 					}
-					File jarFile = JarUtils.toJar(f, jarFileName);
+					File jarFile = ClassPathUtils.toJar(f, jarFileName);
 					generatedJars.add(jarFile);
 					f = jarFile;
 				}
@@ -196,30 +191,6 @@ public class YarnUtils {
 	/**
 	 * 
 	 */
-	private static String[] buildClasspathExclusions(){
-		String[] classpathExclusions = null;
-		try {
-			ClassPathResource exclusionResource = new ClassPathResource(TezConstants.CLASSPATH_EXCLUSIONS);
-			if (exclusionResource.exists()){
-				List<String> exclusionPatterns = new ArrayList<String>();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(exclusionResource.getInputStream()));
-				String line;
-				while ((line = reader.readLine()) != null){
-					exclusionPatterns.add(line.trim());
-				}
-				classpathExclusions = exclusionPatterns.toArray(new String[]{});
-				reader.close();
-			}
-			
-		} catch (Exception e) {
-			logger.warn("Failed to build the list of classpath exclusion. ", e);
-		}
-		return classpathExclusions;
-	}
-	
-	/**
-	 * 
-	 */
 	private static void provisionAndLocalizeScalaLib(FileSystem fs, String appName,  Map<String, LocalResource> localResources){
 		URL url = ClassLoader.getSystemClassLoader().getResource("scala/Function.class");
 		String path = url.getFile();
@@ -239,7 +210,8 @@ public class YarnUtils {
 	 * 
 	 */
 	private static Map<String, LocalResource> provisionAndLocalizeCurrentClasspath(FileSystem fs, String appName) {
-		Path[] provisionedResourcesPaths = YarnUtils.provisionClassPath(fs, appName, buildClasspathExclusions());
+		Path[] provisionedResourcesPaths = YarnUtils.
+				provisionClassPath(fs, appName, ClassPathUtils.initClasspathExclusions(TezConstants.CLASSPATH_EXCLUSIONS));
 		Map<String, LocalResource> localResources = YarnUtils.createLocalResources(fs, provisionedResourcesPaths);
 
 		return localResources;

@@ -1,15 +1,11 @@
-description = 'Tez port for Spark'
+description = 'Tez Samples'
 
-group = 'com.hortonworks'
+group = 'oz.tez.samples'
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'java'
-apply plugin:'scala'
 apply plugin:'application'
-
-//mainClassName="com.hortonworks.spark.tez.TezWordCount"
-mainClassName="com.hortonworks.spark.tez.TezWordCount"
 
 sourceCompatibility=1.6
 targetCompatibility=1.6
@@ -18,16 +14,8 @@ junitVersion = '4.8.2'
 log4jVersion = '1.2.12'
 slf4jVersion = '1.7.2'
 hadoopVersion = '2.4.0'
-scalaVersion = '2.10.4'
-sparkVersion = '1.1.0-SNAPSHOT'
-tezVersion = '0.5.0-SNAPSHOT'
+tezVersion = '0.5.0'
 mockitoVersion = '1.8.4'
-springVersion = "4.0.5.RELEASE"
-
-sourceSets.main.scala.srcDir "src/main/java"
-sourceSets.main.java.srcDirs = []
-sourceSets.test.scala.srcDir "src/test/java"
-sourceSets.test.java.srcDirs = []
 
 repositories {
     mavenCentral()
@@ -78,42 +66,15 @@ configurations {
 	}
 
 dependencies {
-	compile "org.scala-lang:scala-compiler:$scalaVersion"
-	compile "org.scala-lang:scala-library:$scalaVersion"
-	
-	compile ("org.apache.spark:spark-core_2.10:$sparkVersion") {
-		exclude group: 'org.apache.hadoop'
-	}
-	compile ("org.apache.spark:spark-repl_2.10:$sparkVersion") {
-		exclude group: 'org.apache.hadoop'
-	}
-	compile ("org.apache.spark:spark-yarn_2.10:$sparkVersion") {
-		exclude group: 'org.apache.hadoop'
-	}
-	compile "org.springframework:spring-core:$springVersion"
-	compile "org.springframework:spring-beans:$springVersion"
-	compile "org.springframework:spring-aop:$springVersion"
 	compile "org.apache.tez:tez-common:$tezVersion"
 	compile "org.apache.tez:tez-dag:$tezVersion"
 	compile "org.apache.tez:tez-mapreduce:$tezVersion"
 	compile "org.apache.hadoop:hadoop-hdfs:$hadoopVersion"
 	compile "org.apache.hadoop:hadoop-common:$hadoopVersion"
-	compile "org.ow2.asm:asm-all:5.0.3"
-	compile "javassist:javassist:3.12.1.GA"
 	
 	testCompile "junit:junit-dep:$junitVersion"
 	testCompile "org.mockito:mockito-all:$mockitoVersion"
 	
-}
-
-compileScala {
-	compileScala.scalaCompileOptions.additionalParameters= ['-feature']
-	compileScala.scalaCompileOptions.additionalParameters= ['-language:existentials']
-}
-
-compileTestScala {
-	compileTestScala.scalaCompileOptions.additionalParameters= ['-feature']
-	compileTestScala.scalaCompileOptions.additionalParameters= ['-language:reflectiveCalls']
 }
 
 task wrapper(type: Wrapper) {

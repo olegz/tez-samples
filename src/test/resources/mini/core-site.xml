@@ -1,7 +1,8 @@
 <configuration>
 	<property>
 		<name>fs.defaultFS</name>
-		<value>hdfs://localhost:55555</value>
+<!-- 		<value>hdfs://localhost:55555</value> -->
+		<value>hdfs://hadoop-node-one:9000</value>
 		<description>NameNode URI</description>
 	</property>
 </configuration>
